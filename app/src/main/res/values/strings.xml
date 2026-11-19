@@ -1,3 +1,54 @@
 <resources>
     <string name="app_name">QEdit</string>
+
+    <!-- Top bar & menu -->
+    <string name="cd_workspace_recents">Workspace &amp; Recents</string>
+    <string name="cd_open_file">Open File</string>
+    <string name="cd_save">Save</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_more">More</string>
+    <string name="menu_new_file">New File</string>
+    <string name="menu_save_as">Save As…</string>
+    <string name="menu_enable_wrap">Enable Word Wrap</string>
+    <string name="menu_disable_wrap">Disable Word Wrap</string>
+    <string name="menu_show_line_numbers">Show Line Numbers</string>
+    <string name="menu_hide_line_numbers">Hide Line Numbers</string>
+
+    <!-- Tabs & search -->
+    <string name="cd_close_tab">Close tab</string>
+    <string name="search_find_placeholder">Find…</string>
+    <string name="search_replace_placeholder">Replace…</string>
+    <string name="search_replace_one">Replace</string>
+    <string name="search_replace_all">All</string>
+    <string name="cd_prev_match">Previous</string>
+    <string name="cd_next_match">Next</string>
+    <string name="cd_close_search">Close search</string>
+
+    <!-- Accessory bar & status bar -->
+    <string name="cd_undo">Undo</string>
+    <string name="cd_redo">Redo</string>
+    <string name="status_ln_col">Ln %1$d, Col %2$d</string>
+    <string name="status_valid_syntax">Valid %1$s</string>
+
+    <!-- New file dialog -->
+    <string name="dialog_new_file_title">New File</string>
+    <string name="dialog_new_file_label">Filename (e.g. config.yaml, notes.txt)</string>
+    <string name="action_create">Create</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- Workspace sheet -->
+    <string name="workspace_folder_title">Workspace Folder</string>
+    <string name="workspace_choose_folder">Choose Folder</string>
+    <string name="workspace_no_folder">No folder opened yet.</string>
+    <string name="recent_files_title">Recent Files</string>
+    <string name="recent_files_empty">No recent files.</string>
+
+    <!-- Messages -->
+    <string name="msg_saved">Saved %1$s</string>
+    <string name="msg_open_failed">Open failed: %1$s</string>
+    <string name="msg_save_failed">Save failed: %1$s</string>
+    <string name="msg_folder_error">Folder error: %1$s</string>
+    <string name="msg_unknown_error">Unknown error</string>
+    <string name="msg_permission_denied">Permission denied</string>
+    <string name="msg_cannot_read_folder">Cannot read folder</string>
 </resources>

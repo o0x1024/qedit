@@ -6,6 +6,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.qedit.app.R
 import com.qedit.app.data.SafFileRepository
 import com.qedit.app.editor.SyntaxEngine
 import com.qedit.app.editor.TextEditingActions
@@ -173,7 +174,8 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
                 }
                 .onFailure { error ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _messages.tryEmit("Open failed: ${error.localizedMessage ?: "Unknown error"}")
+                    val reason = error.localizedMessage ?: getStr(R.string.msg_unknown_error)
+                    _messages.tryEmit(getStr(R.string.msg_open_failed, reason))
                 }
         }
     }
@@ -194,7 +196,8 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
                 }
                 .onFailure { error ->
                     if (!silentOnError) {
-                        _messages.tryEmit("Folder error: ${error.localizedMessage ?: "Cannot read folder"}")
+                        val reason = error.localizedMessage ?: getStr(R.string.msg_cannot_read_folder)
+                        _messages.tryEmit(getStr(R.string.msg_folder_error, reason))
                     }
                 }
         }
@@ -243,11 +246,12 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
                             recentFiles = repository.getRecentFiles()
                         )
                     }
-                    _messages.tryEmit("Saved $newName")
+                    _messages.tryEmit(getStr(R.string.msg_saved, newName))
                 }
                 .onFailure { error ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _messages.tryEmit("Save failed: ${error.localizedMessage ?: "Permission denied"}")
+                    val reason = error.localizedMessage ?: getStr(R.string.msg_permission_denied)
+                    _messages.tryEmit(getStr(R.string.msg_save_failed, reason))
                 }
         }
     }
@@ -479,5 +483,9 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun refreshRecents() {
         _uiState.update { it.copy(recentFiles = repository.getRecentFiles()) }
+    }
+
+    private fun getStr(resId: Int, vararg args: Any): String {
+        return getApplication<Application>().getString(resId, *args)
     }
 }

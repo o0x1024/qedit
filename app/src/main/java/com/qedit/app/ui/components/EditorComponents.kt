@@ -46,12 +46,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.qedit.app.R
 import com.qedit.app.model.DocumentTab
 import com.qedit.app.model.FolderEntry
 import com.qedit.app.model.RecentFileEntry
@@ -110,7 +112,7 @@ fun TabStrip(
                 Spacer(Modifier.width(4.dp))
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Close tab",
+                    contentDescription = stringResource(R.string.cd_close_tab),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .size(16.dp)
@@ -150,7 +152,7 @@ fun SearchReplaceBar(
             CompactInputBox(
                 value = searchQuery,
                 onValueChange = onSearchQueryChange,
-                placeholder = "Find...",
+                placeholder = stringResource(R.string.search_find_placeholder),
                 modifier = Modifier.weight(1f)
             )
             Text(
@@ -159,13 +161,13 @@ fun SearchReplaceBar(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             IconButton(onClick = onPrevMatch, modifier = Modifier.size(28.dp)) {
-                Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Previous", modifier = Modifier.size(18.dp))
+                Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.cd_prev_match), modifier = Modifier.size(18.dp))
             }
             IconButton(onClick = onNextMatch, modifier = Modifier.size(28.dp)) {
-                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Next", modifier = Modifier.size(18.dp))
+                Icon(Icons.Default.KeyboardArrowDown, contentDescription = stringResource(R.string.cd_next_match), modifier = Modifier.size(18.dp))
             }
             IconButton(onClick = onClose, modifier = Modifier.size(28.dp)) {
-                Icon(Icons.Default.Close, contentDescription = "Close search", modifier = Modifier.size(18.dp))
+                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cd_close_search), modifier = Modifier.size(18.dp))
             }
         }
         Row(
@@ -176,7 +178,7 @@ fun SearchReplaceBar(
             CompactInputBox(
                 value = replaceQuery,
                 onValueChange = onReplaceQueryChange,
-                placeholder = "Replace...",
+                placeholder = stringResource(R.string.search_replace_placeholder),
                 modifier = Modifier.weight(1f)
             )
             TextButton(
@@ -184,14 +186,14 @@ fun SearchReplaceBar(
                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
                 modifier = Modifier.height(30.dp)
             ) {
-                Text("Replace", fontSize = 12.sp)
+                Text(stringResource(R.string.search_replace_one), fontSize = 12.sp)
             }
             TextButton(
                 onClick = onReplaceAll,
                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
                 modifier = Modifier.height(30.dp)
             ) {
-                Text("All", fontSize = 12.sp)
+                Text(stringResource(R.string.search_replace_all), fontSize = 12.sp)
             }
         }
     }
@@ -275,7 +277,7 @@ fun StatusBar(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Ln $line, Col $column",
+                text = stringResource(R.string.status_ln_col, line, column),
                 fontSize = 11.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -301,7 +303,7 @@ fun StatusBar(
                     text = if (diagnostic.isError) {
                         "L${diagnostic.line}:${diagnostic.column} ${diagnostic.message}"
                     } else {
-                        diagnostic.message
+                        stringResource(R.string.status_valid_syntax, fileTypeLabel)
                     },
                     fontSize = 11.sp,
                     color = if (diagnostic.isError) MaterialTheme.colorScheme.error else validColor,
@@ -349,7 +351,7 @@ fun KeyboardAccessoryBar(
             ) {
                 Icon(
                     Icons.AutoMirrored.Filled.Undo,
-                    contentDescription = "Undo",
+                    contentDescription = stringResource(R.string.cd_undo),
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -360,7 +362,7 @@ fun KeyboardAccessoryBar(
             ) {
                 Icon(
                     Icons.AutoMirrored.Filled.Redo,
-                    contentDescription = "Redo",
+                    contentDescription = stringResource(R.string.cd_redo),
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -413,12 +415,12 @@ fun WorkspaceSheetContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Workspace Folder",
+                    text = stringResource(R.string.workspace_folder_title),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
                 TextButton(onClick = onPickFolder) {
-                    Text("Choose Folder")
+                    Text(stringResource(R.string.workspace_choose_folder))
                 }
             }
         }
@@ -426,7 +428,7 @@ fun WorkspaceSheetContent(
         if (folderEntries.isEmpty()) {
             item {
                 Text(
-                    text = "No folder opened yet.",
+                    text = stringResource(R.string.workspace_no_folder),
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -462,7 +464,7 @@ fun WorkspaceSheetContent(
         item {
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             Text(
-                text = "Recent Files",
+                text = stringResource(R.string.recent_files_title),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(bottom = 4.dp)
@@ -472,7 +474,7 @@ fun WorkspaceSheetContent(
         if (recentFiles.isEmpty()) {
             item {
                 Text(
-                    text = "No recent files.",
+                    text = stringResource(R.string.recent_files_empty),
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 16.dp)

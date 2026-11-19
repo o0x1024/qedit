@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">QEdit</string>
+
+    <!-- Top bar & menu -->
+    <string name="cd_workspace_recents">工作区与最近文件</string>
+    <string name="cd_open_file">打开文件</string>
+    <string name="cd_save">保存</string>
+    <string name="cd_search">查找</string>
+    <string name="cd_more">更多</string>
+    <string name="menu_new_file">新建文件</string>
+    <string name="menu_save_as">另存为…</string>
+    <string name="menu_enable_wrap">开启自动换行</string>
+    <string name="menu_disable_wrap">关闭自动换行</string>
+    <string name="menu_show_line_numbers">显示行号</string>
+    <string name="menu_hide_line_numbers">隐藏行号</string>
+
+    <!-- Tabs & search -->
+    <string name="cd_close_tab">关闭标签页</string>
+    <string name="search_find_placeholder">查找…</string>
+    <string name="search_replace_placeholder">替换为…</string>
+    <string name="search_replace_one">替换</string>
+    <string name="search_replace_all">全部</string>
+    <string name="cd_prev_match">上一个</string>
+    <string name="cd_next_match">下一个</string>
+    <string name="cd_close_search">关闭查找</string>
+
+    <!-- Accessory bar & status bar -->
+    <string name="cd_undo">撤销</string>
+    <string name="cd_redo">重做</string>
+    <string name="status_ln_col">第 %1$d 行，第 %2$d 列</string>
+    <string name="status_valid_syntax">%1$s 语法正确</string>
+
+    <!-- New file dialog -->
+    <string name="dialog_new_file_title">新建文件</string>
+    <string name="dialog_new_file_label">文件名（如 config.yaml、notes.txt）</string>
+    <string name="action_create">创建</string>
+    <string name="action_cancel">取消</string>
+
+    <!-- Workspace sheet -->
+    <string name="workspace_folder_title">工作区文件夹</string>
+    <string name="workspace_choose_folder">选择文件夹</string>
+    <string name="workspace_no_folder">尚未打开文件夹。</string>
+    <string name="recent_files_title">最近打开</string>
+    <string name="recent_files_empty">暂无最近打开的文件。</string>
+
+    <!-- Messages -->
+    <string name="msg_saved">已保存 %1$s</string>
+    <string name="msg_open_failed">打开失败：%1$s</string>
+    <string name="msg_save_failed">保存失败：%1$s</string>
+    <string name="msg_folder_error">目录读取失败：%1$s</string>
+    <string name="msg_unknown_error">未知错误</string>
+    <string name="msg_permission_denied">无写入权限</string>
+    <string name="msg_cannot_read_folder">无法读取目录</string>
+</resources>

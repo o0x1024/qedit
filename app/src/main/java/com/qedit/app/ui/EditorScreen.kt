@@ -50,11 +50,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.qedit.app.R
 import com.qedit.app.editor.EditorVisualTransformation
 import com.qedit.app.ui.components.KeyboardAccessoryBar
 import com.qedit.app.ui.components.SearchReplaceBar
@@ -105,10 +107,10 @@ fun EditorScreen(
                 ),
                 actions = {
                     IconButton(onClick = { showWorkspaceSheet = true }) {
-                        Icon(Icons.Default.FolderOpen, contentDescription = "Workspace & Recents")
+                        Icon(Icons.Default.FolderOpen, contentDescription = stringResource(R.string.cd_workspace_recents))
                     }
                     IconButton(onClick = onRequestOpenFile) {
-                        Icon(Icons.Default.Add, contentDescription = "Open File")
+                        Icon(Icons.Default.Add, contentDescription = stringResource(R.string.cd_open_file))
                     }
                     IconButton(
                         onClick = {
@@ -116,42 +118,54 @@ fun EditorScreen(
                             viewModel.saveActiveTab { onRequestSaveAs(name) }
                         }
                     ) {
-                        Icon(Icons.Default.Save, contentDescription = "Save")
+                        Icon(Icons.Default.Save, contentDescription = stringResource(R.string.cd_save))
                     }
                     IconButton(onClick = { viewModel.toggleSearch() }) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
+                        Icon(Icons.Default.Search, contentDescription = stringResource(R.string.cd_search))
                     }
                     Box {
                         IconButton(onClick = { showMenu = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More")
+                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.cd_more))
                         }
                         DropdownMenu(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("New File") },
+                                text = { Text(stringResource(R.string.menu_new_file)) },
                                 onClick = {
                                     showMenu = false
                                     showNewFileDialog = true
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Save As...") },
+                                text = { Text(stringResource(R.string.menu_save_as)) },
                                 onClick = {
                                     showMenu = false
                                     onRequestSaveAs(activeTab?.displayName ?: "untitled.txt")
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text(if (uiState.softWrap) "Disable Word Wrap" else "Enable Word Wrap") },
+                                text = {
+                                    Text(
+                                        stringResource(
+                                            if (uiState.softWrap) R.string.menu_disable_wrap else R.string.menu_enable_wrap
+                                        )
+                                    )
+                                },
                                 onClick = {
                                     showMenu = false
                                     viewModel.toggleSoftWrap()
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text(if (uiState.showLineNumbers) "Hide Line Numbers" else "Show Line Numbers") },
+                                text = {
+                                    Text(
+                                        stringResource(
+                                            if (uiState.showLineNumbers) R.string.menu_hide_line_numbers else R.string.menu_show_line_numbers
+                                        )
+                                    )
+                                },
                                 onClick = {
                                     showMenu = false
                                     viewModel.toggleLineNumbers()
@@ -306,12 +320,12 @@ fun EditorScreen(
     if (showNewFileDialog) {
         AlertDialog(
             onDismissRequest = { showNewFileDialog = false },
-            title = { Text("New File") },
+            title = { Text(stringResource(R.string.dialog_new_file_title)) },
             text = {
                 OutlinedTextField(
                     value = newFileName,
                     onValueChange = { newFileName = it },
-                    label = { Text("Filename (e.g. config.yaml, notes.txt)") },
+                    label = { Text(stringResource(R.string.dialog_new_file_label)) },
                     singleLine = true
                 )
             },
@@ -323,12 +337,12 @@ fun EditorScreen(
                         showNewFileDialog = false
                     }
                 ) {
-                    Text("Create")
+                    Text(stringResource(R.string.action_create))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showNewFileDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         )
