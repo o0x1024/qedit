@@ -17,29 +17,57 @@ import org.json.JSONObject
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.error.MarkedYAMLException
 
+data class SyntaxColorScheme(
+    val comment: Color,
+    val key: Color,
+    val stringLiteral: Color,
+    val numberLiteral: Color,
+    val keyword: Color,
+    val punctuation: Color,
+    val heading: Color,
+    val searchHighlightBg: Color,
+    val activeSearchBg: Color
+)
+
 object SyntaxPalette {
-    val Comment = Color(0xFF64748B)
-    val Key = Color(0xFF38BDF8)
-    val StringLiteral = Color(0xFF4ADE80)
-    val NumberLiteral = Color(0xFFFBBF24)
-    val Keyword = Color(0xFFC084FC)
-    val Punctuation = Color(0xFF94A3B8)
-    val Heading = Color(0xFF38BDF8)
-    val SearchHighlightBg = Color(0x66F59E0B)
-    val ActiveSearchBg = Color(0xCCF59E0B)
+    val Dark = SyntaxColorScheme(
+        comment = Color(0xFF64748B),
+        key = Color(0xFF38BDF8),
+        stringLiteral = Color(0xFF4ADE80),
+        numberLiteral = Color(0xFFFBBF24),
+        keyword = Color(0xFFC084FC),
+        punctuation = Color(0xFF94A3B8),
+        heading = Color(0xFF38BDF8),
+        searchHighlightBg = Color(0x66F59E0B),
+        activeSearchBg = Color(0xCCF59E0B)
+    )
+
+    val Light = SyntaxColorScheme(
+        comment = Color(0xFF64748B),
+        key = Color(0xFF0369A1),
+        stringLiteral = Color(0xFF15803D),
+        numberLiteral = Color(0xFFB45309),
+        keyword = Color(0xFF7E22CE),
+        punctuation = Color(0xFF475569),
+        heading = Color(0xFF0369A1),
+        searchHighlightBg = Color(0x4DF59E0B),
+        activeSearchBg = Color(0x99F59E0B)
+    )
 }
 
 class EditorVisualTransformation(
     private val fileType: FileType,
     private val searchMatches: List<SearchMatch>,
-    private val activeMatchIndex: Int
+    private val activeMatchIndex: Int,
+    private val isDarkTheme: Boolean = true
 ) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val highlighted = SyntaxEngine.highlight(
             raw = text.text,
             fileType = fileType,
             searchMatches = searchMatches,
-            activeMatchIndex = activeMatchIndex
+            activeMatchIndex = activeMatchIndex,
+            colors = if (isDarkTheme) SyntaxPalette.Dark else SyntaxPalette.Light
         )
         return TransformedText(highlighted, OffsetMapping.Identity)
     }
@@ -63,17 +91,18 @@ object SyntaxEngine {
         raw: String,
         fileType: FileType,
         searchMatches: List<SearchMatch> = emptyList(),
-        activeMatchIndex: Int = -1
+        activeMatchIndex: Int = -1,
+        colors: SyntaxColorScheme = SyntaxPalette.Dark
     ): AnnotatedString {
         return buildAnnotatedString {
             append(raw)
             // Keep highlighting fast on large files by capping full-token styling above 200k chars.
             if (raw.length <= 200_000) {
                 when (fileType) {
-                    FileType.YAML -> highlightYaml(raw, this)
-                    FileType.JSON -> highlightJson(raw, this)
-                    FileType.MARKDOWN -> highlightMarkdown(raw, this)
-                    FileType.CONFIG -> highlightConfig(raw, this)
+                    FileType.YAML -> highlightYaml(raw, this, colors)
+                    FileType.JSON -> highlightJson(raw, this, colors)
+                    FileType.MARKDOWN -> highlightMarkdown(raw, this, colors)
+                    FileType.CONFIG -> highlightConfig(raw, this, colors)
                     FileType.PLAIN -> Unit
                 }
             }
@@ -82,9 +111,9 @@ object SyntaxEngine {
                     addStyle(
                         SpanStyle(
                             background = if (idx == activeMatchIndex) {
-                                SyntaxPalette.ActiveSearchBg
+                                colors.activeSearchBg
                             } else {
-                                SyntaxPalette.SearchHighlightBg
+                                colors.searchHighlightBg
                             }
                         ),
                         match.start,
@@ -95,19 +124,19 @@ object SyntaxEngine {
         }
     }
 
-    private fun highlightYaml(raw: String, builder: AnnotatedString.Builder) {
+    private fun highlightYaml(raw: String, builder: AnnotatedString.Builder, colors: SyntaxColorScheme) {
         var lineStart = 0
         while (lineStart <= raw.length) {
             val lineEnd = raw.indexOf('\n', lineStart).let { if (it == -1) raw.length else it }
             val line = raw.substring(lineStart, lineEnd)
 
             if (line == "---" || line == "...") {
-                builder.addStyle(SpanStyle(color = SyntaxPalette.Keyword, fontWeight = FontWeight.Bold), lineStart, lineEnd)
+                builder.addStyle(SpanStyle(color = colors.keyword, fontWeight = FontWeight.Bold), lineStart, lineEnd)
             } else {
                 yamlListDashRegex.find(line)?.let { match ->
                     val dashStart = lineStart + match.groups[2]!!.range.first
                     val dashEnd = lineStart + match.groups[2]!!.range.last + 1
-                    builder.addStyle(SpanStyle(color = SyntaxPalette.Punctuation, fontWeight = FontWeight.Bold), dashStart, dashEnd)
+                    builder.addStyle(SpanStyle(color = colors.punctuation, fontWeight = FontWeight.Bold), dashStart, dashEnd)
                 }
 
                 val commentMatch = yamlCommentRegex.find(line)
@@ -117,13 +146,13 @@ object SyntaxEngine {
                 yamlKeyRegex.find(codePart)?.let { match ->
                     val keyGroup = match.groups[2]!!
                     builder.addStyle(
-                        SpanStyle(color = SyntaxPalette.Key, fontWeight = FontWeight.Medium),
+                        SpanStyle(color = colors.key, fontWeight = FontWeight.Medium),
                         lineStart + keyGroup.range.first,
                         lineStart + keyGroup.range.last + 1
                     )
                     val colonGroup = match.groups[3]!!
                     builder.addStyle(
-                        SpanStyle(color = SyntaxPalette.Punctuation),
+                        SpanStyle(color = colors.punctuation),
                         lineStart + colonGroup.range.first,
                         lineStart + colonGroup.range.last + 1
                     )
@@ -131,7 +160,7 @@ object SyntaxEngine {
 
                 stringRegex.findAll(codePart).forEach { m ->
                     builder.addStyle(
-                        SpanStyle(color = SyntaxPalette.StringLiteral),
+                        SpanStyle(color = colors.stringLiteral),
                         lineStart + m.range.first,
                         lineStart + m.range.last + 1
                     )
@@ -139,7 +168,7 @@ object SyntaxEngine {
 
                 yamlKeywordRegex.findAll(codePart).forEach { m ->
                     builder.addStyle(
-                        SpanStyle(color = SyntaxPalette.Keyword),
+                        SpanStyle(color = colors.keyword),
                         lineStart + m.range.first,
                         lineStart + m.range.last + 1
                     )
@@ -147,7 +176,7 @@ object SyntaxEngine {
 
                 numberRegex.findAll(codePart).forEach { m ->
                     builder.addStyle(
-                        SpanStyle(color = SyntaxPalette.NumberLiteral),
+                        SpanStyle(color = colors.numberLiteral),
                         lineStart + m.range.first,
                         lineStart + m.range.last + 1
                     )
@@ -155,7 +184,7 @@ object SyntaxEngine {
 
                 commentMatch?.let { m ->
                     val cStart = lineStart + m.range.first
-                    builder.addStyle(SpanStyle(color = SyntaxPalette.Comment), cStart, lineEnd)
+                    builder.addStyle(SpanStyle(color = colors.comment), cStart, lineEnd)
                 }
             }
 
@@ -164,33 +193,33 @@ object SyntaxEngine {
         }
     }
 
-    private fun highlightJson(raw: String, builder: AnnotatedString.Builder) {
+    private fun highlightJson(raw: String, builder: AnnotatedString.Builder, colors: SyntaxColorScheme) {
         stringRegex.findAll(raw).forEach { m ->
-            builder.addStyle(SpanStyle(color = SyntaxPalette.StringLiteral), m.range.first, m.range.last + 1)
+            builder.addStyle(SpanStyle(color = colors.stringLiteral), m.range.first, m.range.last + 1)
         }
         jsonKeyRegex.findAll(raw).forEach { m ->
             builder.addStyle(
-                SpanStyle(color = SyntaxPalette.Key, fontWeight = FontWeight.Medium),
+                SpanStyle(color = colors.key, fontWeight = FontWeight.Medium),
                 m.range.first,
                 m.range.last + 1
             )
         }
         jsonKeywordRegex.findAll(raw).forEach { m ->
-            builder.addStyle(SpanStyle(color = SyntaxPalette.Keyword), m.range.first, m.range.last + 1)
+            builder.addStyle(SpanStyle(color = colors.keyword), m.range.first, m.range.last + 1)
         }
         numberRegex.findAll(raw).forEach { m ->
-            builder.addStyle(SpanStyle(color = SyntaxPalette.NumberLiteral), m.range.first, m.range.last + 1)
+            builder.addStyle(SpanStyle(color = colors.numberLiteral), m.range.first, m.range.last + 1)
         }
     }
 
-    private fun highlightMarkdown(raw: String, builder: AnnotatedString.Builder) {
+    private fun highlightMarkdown(raw: String, builder: AnnotatedString.Builder, colors: SyntaxColorScheme) {
         var lineStart = 0
         while (lineStart <= raw.length) {
             val lineEnd = raw.indexOf('\n', lineStart).let { if (it == -1) raw.length else it }
             val line = raw.substring(lineStart, lineEnd)
             if (mdHeadingRegex.matches(line)) {
                 builder.addStyle(
-                    SpanStyle(color = SyntaxPalette.Heading, fontWeight = FontWeight.Bold),
+                    SpanStyle(color = colors.heading, fontWeight = FontWeight.Bold),
                     lineStart,
                     lineEnd
                 )
@@ -200,17 +229,17 @@ object SyntaxEngine {
         }
     }
 
-    private fun highlightConfig(raw: String, builder: AnnotatedString.Builder) {
+    private fun highlightConfig(raw: String, builder: AnnotatedString.Builder, colors: SyntaxColorScheme) {
         var lineStart = 0
         while (lineStart <= raw.length) {
             val lineEnd = raw.indexOf('\n', lineStart).let { if (it == -1) raw.length else it }
             val line = raw.substring(lineStart, lineEnd)
             val trimmed = line.trimStart()
             if (trimmed.startsWith("#") || trimmed.startsWith(";")) {
-                builder.addStyle(SpanStyle(color = SyntaxPalette.Comment), lineStart, lineEnd)
+                builder.addStyle(SpanStyle(color = colors.comment), lineStart, lineEnd)
             } else if (iniSectionRegex.matches(line)) {
                 builder.addStyle(
-                    SpanStyle(color = SyntaxPalette.Keyword, fontWeight = FontWeight.Bold),
+                    SpanStyle(color = colors.keyword, fontWeight = FontWeight.Bold),
                     lineStart,
                     lineEnd
                 )
@@ -218,14 +247,14 @@ object SyntaxEngine {
                 iniKeyRegex.find(line)?.let { match ->
                     val k = match.groups[2]!!
                     builder.addStyle(
-                        SpanStyle(color = SyntaxPalette.Key),
+                        SpanStyle(color = colors.key),
                         lineStart + k.range.first,
                         lineStart + k.range.last + 1
                     )
                 }
                 stringRegex.findAll(line).forEach { m ->
                     builder.addStyle(
-                        SpanStyle(color = SyntaxPalette.StringLiteral),
+                        SpanStyle(color = colors.stringLiteral),
                         lineStart + m.range.first,
                         lineStart + m.range.last + 1
                     )

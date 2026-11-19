@@ -3,6 +3,7 @@ package com.qedit.app.ui
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -201,15 +202,18 @@ fun EditorScreen(
             if (activeTab != null) {
                 val verticalScroll = rememberScrollState()
                 val horizontalScroll = rememberScrollState()
+                val isDark = isSystemInDarkTheme()
                 val visualTransformation = remember(
                     activeTab.fileType,
                     uiState.searchMatches,
-                    uiState.activeMatchIndex
+                    uiState.activeMatchIndex,
+                    isDark
                 ) {
                     EditorVisualTransformation(
                         fileType = activeTab.fileType,
                         searchMatches = uiState.searchMatches,
-                        activeMatchIndex = uiState.activeMatchIndex
+                        activeMatchIndex = uiState.activeMatchIndex,
+                        isDarkTheme = isDark
                     )
                 }
 

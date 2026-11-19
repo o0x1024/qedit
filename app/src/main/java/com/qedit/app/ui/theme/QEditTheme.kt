@@ -1,7 +1,9 @@
 package com.qedit.app.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
@@ -19,10 +21,27 @@ private val QEditDarkColorScheme = darkColorScheme(
     error = Color(0xFFF87171)
 )
 
+private val QEditLightColorScheme = lightColorScheme(
+    primary = Color(0xFF0284C7),
+    onPrimary = Color(0xFFFFFFFF),
+    secondary = Color(0xFF4F46E5),
+    background = Color(0xFFFFFFFF),
+    onBackground = Color(0xFF0F172A),
+    surface = Color(0xFFF8FAFC),
+    onSurface = Color(0xFF0F172A),
+    surfaceVariant = Color(0xFFE2E8F0),
+    onSurfaceVariant = Color(0xFF475569),
+    outline = Color(0xFFCBD5E1),
+    error = Color(0xFFDC2626)
+)
+
 @Composable
-fun QEditTheme(content: @Composable () -> Unit) {
+fun QEditTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
     MaterialTheme(
-        colorScheme = QEditDarkColorScheme,
+        colorScheme = if (darkTheme) QEditDarkColorScheme else QEditLightColorScheme,
         content = content
     )
 }

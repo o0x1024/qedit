@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -281,6 +282,7 @@ fun StatusBar(
         }
 
         if (diagnostic != null) {
+            val validColor = if (isSystemInDarkTheme()) Color(0xFF4ADE80) else Color(0xFF15803D)
             Row(
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
@@ -292,7 +294,7 @@ fun StatusBar(
                 Icon(
                     imageVector = if (diagnostic.isError) Icons.Default.Error else Icons.Default.CheckCircle,
                     contentDescription = null,
-                    tint = if (diagnostic.isError) MaterialTheme.colorScheme.error else Color(0xFF4ADE80),
+                    tint = if (diagnostic.isError) MaterialTheme.colorScheme.error else validColor,
                     modifier = Modifier.size(13.dp)
                 )
                 Text(
@@ -302,7 +304,7 @@ fun StatusBar(
                         diagnostic.message
                     },
                     fontSize = 11.sp,
-                    color = if (diagnostic.isError) MaterialTheme.colorScheme.error else Color(0xFF4ADE80),
+                    color = if (diagnostic.isError) MaterialTheme.colorScheme.error else validColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
